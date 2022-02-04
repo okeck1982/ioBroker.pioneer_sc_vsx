@@ -1,0 +1,106 @@
+{
+	"common": {
+		"name": "pioneer_sc_vsx",
+		"version": "0.0.1",
+		"news": {
+			"0.0.1": {
+				"en": "initial release",
+				"de": "Erstveröffentlichung"
+			}
+		},
+		"title": "Pioneer SC/VSX",
+		"titleLang": {
+			"en": "Pioneer SC/VSX",
+			"de": "Pioneer SC/VSX"
+		},
+		"desc": {
+			"en": "Remote Control of Pioneer SC/VSX AV-Receiver",
+			"de": "Fernbedienung des Pioneer SC/VSX AV-Receivers"
+		},
+		"authors": [
+			"okeck1982 <97165003+okeck1982@users.noreply.github.com>"
+		],
+		"keywords": [
+			"pioneer",
+			"remote",
+			"av receiver"
+		],
+		"license": "MIT",
+		"platform": "Javascript/Node.js",
+		"main": "main.js",
+		"icon": "pioneer_sc_vsx.png",
+		"enabled": true,
+		"extIcon": "https://raw.githubusercontent.com/okeck1982/ioBroker.pioneer_sc_vsx/main/admin/pioneer_sc_vsx.png",
+		"readme": "https://github.com/okeck1982/ioBroker.pioneer_sc_vsx/blob/main/README.md",
+		"loglevel": "info",
+		"mode": "daemon",
+		"type": "hardware",
+		"compact": true,
+		"connectionType": "local",
+		"dataSource": "push",
+		"materialize": true,
+		"materializeTab": true,
+		"adminTab": {
+			"singleton": true,
+			"name": {
+				"en": "Pioneer SC/VSX",
+				"de": "Pioneer SC/VSX"
+			},
+			"link": "",
+			"fa-icon": "info"
+		},
+		"dependencies": [
+			{
+				"js-controller": ">=2.0.0"
+			}
+		]
+	},
+	"native": {
+        "host": "",
+        "port": 23,
+        "clearOnDisconnect": false,
+        "autoreconnect": 0,
+        "volumeMin": -50,
+        "volumeMax": -20
+	},
+	"objects": [],
+	"instanceObjects": [
+		{
+			"_id": "info",
+			"type": "channel",
+			"common": {
+				"name": "Information"
+			},
+			"native": {}
+		},
+        {
+            "_id": "general",
+            "type": "channel",
+            "common": {
+                "name": "General"
+            },
+            "native": {}
+        },
+        {
+            "_id": "audio",
+            "type": "channel",
+            "common": {
+                "name": "Audio"
+            },
+            "native": {}
+        },
+		{
+			"_id": "info.connection",
+			"type": "state",
+			"common": {
+				"role": "indicator.connected",
+				"name": "Device or service connected",
+				"type": "boolean",
+				"read": true,
+				"write": false,
+				"def": false
+			},
+			"native": {}
+		}
+	]
+}
