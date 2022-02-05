@@ -1,5 +1,5 @@
-<!-- ![Logo](admin/pioneer_sc_vsx.png | height=100px)-->
 <img src="admin/pioneer_sc_vsx.png" width="150px" alt="Logo">
+
 # ioBroker.pioneer_sc_vsx
 
 [![NPM version](https://img.shields.io/npm/v/iobroker.pioneer_sc_vsx.svg)](https://www.npmjs.com/package/iobroker.pioneer_sc_vsx)

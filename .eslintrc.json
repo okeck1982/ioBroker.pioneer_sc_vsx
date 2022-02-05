@@ -9,7 +9,7 @@
 		"eslint:recommended"
 	],
 	"plugins": [],
-	"rules": {
+	"rules": {		
 		"indent": [
 			"error",
 			"tab",

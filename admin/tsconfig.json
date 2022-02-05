@@ -3,6 +3,6 @@
 	"include": [
 		"./admin.d.ts",
 		"./**/*.js",
-		"../src/lib/adapter-config.d.ts",
+		"../src/lib/adapter-config.d.ts"
 	]
 }
