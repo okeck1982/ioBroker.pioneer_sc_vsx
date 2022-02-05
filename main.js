@@ -126,7 +126,7 @@ class PioneerScVsx extends utils.Adapter {
 		});
 		// Start Connection if active
 		this.getState("active", (err, state) => {
-			if( state && state.val == true ) {
+			if( state && state.val ) {
 				this.device.connect();
 			}
 		});
@@ -159,19 +159,15 @@ class PioneerScVsx extends utils.Adapter {
 			this.log.debug("[STATE_CHANGED]: '" + this.name + "." + this.instance + "' from '" + id + "'");
 
 			if( varName == "query" ) {
-				if( state && !state.ack ) {
-					this.device.queryStatus();
-					this.setState("query", { val: false, ack: true});
-					return;
-				}
+				this.device.queryStatus();
+				this.setState("query", { val: false, ack: true});
+				return;
 			}
 
 			if( varName == "active" ) {
-				if( state && !state.ack ) {
-					if(state.val == true ) { this.device.connect();	} else { this.device.disconnect(); }
-					this.setState("active", { val: state.val, ack: true});
-					return;
-				}
+				if(state.val) { this.device.connect();	} else { this.device.disconnect(); }
+				this.setState("active", { val: state.val, ack: true});
+				return;
 			}
 
 			/* Get Device Variable Name from state name */
