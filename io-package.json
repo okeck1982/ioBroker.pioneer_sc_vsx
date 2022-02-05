@@ -39,16 +39,6 @@
 		"connectionType": "local",
 		"dataSource": "push",
 		"materialize": true,
-		"materializeTab": true,
-		"adminTab": {
-			"singleton": true,
-			"name": {
-				"en": "Pioneer SC/VSX",
-				"de": "Pioneer SC/VSX"
-			},
-			"link": "",
-			"fa-icon": "info"
-		},
 		"dependencies": [
 			{
 				"js-controller": ">=2.0.0"
