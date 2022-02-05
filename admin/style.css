@@ -9,7 +9,7 @@
 }
 
 .m.adapter-container,
-.m.adapter-container > div.App {
+.m.adapter-container > div.App { /* stylelint-disable-line */
   /* Fix layout/scrolling issues with tabs */
   height: 100%;
   width: 100%;
