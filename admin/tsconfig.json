@@ -3,7 +3,6 @@
 	"include": [
 		"./admin.d.ts",
 		"./**/*.js",
-		// include the adapter-config definition if it exists
 		"../src/lib/adapter-config.d.ts",
 	]
 }
