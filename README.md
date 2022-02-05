@@ -1,6 +1,5 @@
-<img src="admin/pioneer_sc_vsx.png" width="150px" alt="Logo">
-
 # ioBroker.pioneer_sc_vsx
+<img src="admin/pioneer_sc_vsx.png" width="150px" alt="Logo">
 
 [![NPM version](https://img.shields.io/npm/v/iobroker.pioneer_sc_vsx.svg)](https://www.npmjs.com/package/iobroker.pioneer_sc_vsx)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.pioneer_sc_vsx.svg)](https://www.npmjs.com/package/iobroker.pioneer_sc_vsx)
@@ -9,11 +8,12 @@
 
 [![NPM](https://nodei.co/npm/iobroker.pioneer_sc_vsx.png?downloads=true)](https://nodei.co/npm/iobroker.pioneer_sc_vsx/)
 
-**Tests:** ![Test and Release](https://github.com/okeck1982/ioBroker.pioneer_sc_vsx/workflows/Test%20and%20Release/badge.svg)<br/>
-**CodeQL:** ![Code QL](https://github.com/okeck1982/ioBroker.pioneer_sc_vsx/workflows/CodeQL/badge.svg)
-## pioneer_sc_vsx adapter for ioBroker
-**SuperLinter:**![Super Linter](https://github.com/okeck1982/ioBroker.pioneer_sc_vsx/workflows/Lint%20Code%20Base/badge.svg)
+## Tests:
+![Test and Release](https://github.com/okeck1982/ioBroker.pioneer_sc_vsx/workflows/Test%20and%20Release/badge.svg)
+![Code QL](https://github.com/okeck1982/ioBroker.pioneer_sc_vsx/workflows/CodeQL/badge.svg)
+![Super Linter](https://github.com/okeck1982/ioBroker.pioneer_sc_vsx/workflows/Lint%20Code%20Base/badge.svg)
 
+## pioneer_sc_vsx adapter for ioBroker
 Remote Control of Pioneer SC/VSX AV-Receiver
 
 ## Description
