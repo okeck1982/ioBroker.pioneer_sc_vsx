@@ -8,7 +8,7 @@
 
 [![NPM](https://nodei.co/npm/iobroker.pioneer_sc_vsx.png?downloads=true)](https://nodei.co/npm/iobroker.pioneer_sc_vsx/)
 
-## Tests:
+## Tests
 ![Test and Release](https://github.com/okeck1982/ioBroker.pioneer_sc_vsx/workflows/Test%20and%20Release/badge.svg)
 ![Code QL](https://github.com/okeck1982/ioBroker.pioneer_sc_vsx/workflows/CodeQL/badge.svg)
 ![Super Linter](https://github.com/okeck1982/ioBroker.pioneer_sc_vsx/workflows/Lint%20Code%20Base/badge.svg)
