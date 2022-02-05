@@ -32,5 +32,6 @@ jobs:
           VALIDATE_MARKDOWN: true
           VALIDATE_JSON: true
           VALIDATE_GITHUB_ACTIONS: true
+          FILTER_REGEX_EXCLUDE: ".*tsconfig.*"
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
