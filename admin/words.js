@@ -20,8 +20,8 @@ systemDictionary = {
 		"de": "üblicherweise 23 (z.B. für VSX-921) oder 8102 (z.B. für VSX-S510 oder VSX-922)",
 	},
 	"clearOnDisconnect": {
-		"en": "Clear values on Disconnect",
-		"de": "Werte löschen wenn getrennt"
+		"en": "Clear values on disconnect",
+		"de": "Werte löschen, wenn getrennt"
 	},
 	"autoreconnect": {
 		"en": "Auto reconnect (sec.)",
@@ -29,22 +29,22 @@ systemDictionary = {
 	},
 	"autoreconnect_tooltip": {
 		"en": "when device is not reachable try to reconnect every xx seconds (0 = no retry)",
-		"de": "wenn gerät nicht erreichbar ist, wird alle x Sekunden eine Neuverbindung versucht (0 = keine Neuverbindung)",
+		"de": "wenn Gerät nicht erreichbar ist, wird alle x Sekunden eine Neuverbindung versucht (0 = keine Neuverbindung)",
 	},
 	"volumeMin": {
 		"en": "Limit min. volume to:",
 		"de": "min. Lautstärke limitieren auf:"
 	},
 	"volumeMin_tooltip": {
-		"en": "-80dB displayed as 1, 0dB displayes as 161 and +12dB displayed as 185",
-		"de": "-80dB = angezeigt als 1, 0dB = angezeigt als 161 und +12dB = angezeigt als 185"
+		"en": "-80dB displayed on device as 1, 0dB displayed on device as 161 and +12dB displayed on device as 185",
+		"de": "-80dB am Gerät als 1 angezeigt, 0dB am Gerät als 161 angezeigt und +12dB am Gerät als 185 angezeigt"
 	},
 	"volumeMax": {
 		"en": "Limit max. volume to:",
 		"de": "max. Lautstärke limitieren auf:"
 	},
 	"volumeMax_tooltip": {
-		"en": "Limit max. volume to:",
-		"de": "max. Lautstärke limitieren auf:"
+		"en": "-80dB displayed on device as 1, 0dB displayed on device as 161 and +12dB displayed on device as 185",
+		"de": "-80dB am Gerät als 1 angezeigt, 0dB am Gerät als 161 angezeigt und +12dB am Gerät als 185 angezeigt"
 	}
 };
