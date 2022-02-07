@@ -160,13 +160,13 @@ class PioneerScVsx extends utils.Adapter {
 
 			if( varName == "query" ) {
 				this.device.queryStatus();
-				this.setState("query", { val: false, ack: true});
+				this.setState(varName, { val: false, ack: true});
 				return;
 			}
 
 			if( varName == "active" ) {
 				if(state.val) { this.device.connect();	} else { this.device.disconnect(); }
-				this.setState("active", { val: state.val, ack: true});
+				this.setState(varName, { val: state.val, ack: true});
 				return;
 			}
 

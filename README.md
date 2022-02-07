@@ -17,8 +17,18 @@
 Remote Control of Pioneer SC/VSX AV-Receiver
 
 ## Description
-Remote Control a Pioneer SC / VSV AV-Receiver over Network.
-The Adapter gets Live Status Updates from the Receiver and ioBroker can send Control Commands to it.
+Remote Control a Pioneer SC / VSX AV receiver over Network.
+The Adapter gets live status updates from the receiver and ioBroker can send control commands to it.
+
+VSX devices up to model year 2016, like
+* Pioneer VSX-S510
+* Pioneer VSX-828
+* Pioneer VSX-831
+* Pioneer VSX-921
+* Pioneer VSX-922
+* Pionner VSX-923
+
+Control commands can be found in official doc of Pioneer at http://www.pioneerelectronics.com/StaticFiles/PUSA/Files/Home%20Custom%20Install/SC-37-RS232.pdf
 
 ## Changelog
 <!--
