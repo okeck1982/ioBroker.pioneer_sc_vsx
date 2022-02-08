@@ -27,8 +27,11 @@ VSX devices up to model year 2016, like
 * Pioneer VSX-921
 * Pioneer VSX-922
 * Pionner VSX-923
+more supported devices may be documented in former [app ControlApp of Pioneer](https://jpn.pioneer/ja/support/soft/iapp_controlapp/en.html#anp02)
 
-Control commands can be found in official doc of Pioneer at http://www.pioneerelectronics.com/StaticFiles/PUSA/Files/Home%20Custom%20Install/SC-37-RS232.pdf
+Control commands can be found in [official doc of Pioneer](http://www.pioneerelectronics.com/StaticFiles/PUSA/Files/Home%20Custom%20Install/SC-37-RS232.pdf)
+
+For newer models like Pioneer VSX-1151 please refer to [adapter with eiscp support](https://github.com/ioBroker/ioBroker.onkyo).
 
 ## Changelog
 <!--
