@@ -73,6 +73,8 @@ class PioneerScVsx extends utils.Adapter {
 		await this.setObjectNotExistsAsync("audio.inputSignal", { _id: "audio.inputSignal",	type: "state", common: { name: "Input Signal", type: "string", role: "variable", read: true, write: false, desc: "Audio Codec / Frequency" }, native: {}});
 		await this.setObjectNotExistsAsync("audio.mute", { _id: "audio.mute", type: "state", common: { name: "Mute", type: "boolean", role: "switch", read: true, write: true, states: { "false": "OFF", "true": "MUTED" }}, native: {}});
 		await this.setObjectNotExistsAsync("audio.volume", { _id: "audio.volume", type: "state", common: { name: "Volume", type: "number", role: "variable", read: true, write: true, unit: " dB", min: -80, max: 12 },	native: {}});
+		await this.setObjectNotExistsAsync("buttonVolumeUp", { type: "state", common: { name: "ButtonVolumeUp", type: "boolean", role: "button", read: false, write: true }, native: {}});
+		await this.setObjectNotExistsAsync("buttonVolumeDown", { type: "state", common: { name: "ButtonVolumeDown", type: "boolean", role: "button", read: false, write: true }, native: {}});
 		await this.setObjectNotExistsAsync("audio.currentListeningMode", { _id: "audio.currentListeningMode", type: "state", common: { name: "Listening Mode (current)", type: "string", role: "variable", read: true, write: false }, native: {}});
 		await this.setObjectNotExistsAsync("audio.selectedListeningMode", {	_id: "audio.selectedListeningMode",	type: "state", common: { name: "Listening Mode (selected)", type: "string", role: "variable", read: true, write: true, states: pioneer.PioneerTypes.SelectedListeningMode }, native: {}});
 		await this.setObjectNotExistsAsync("audio.channelInputFormat", { _id: "audio.channelInputFormat", type: "state", common: { name: "Channel Input Format", type: "string", role: "variable", read: true, write: false }, native: {}});
@@ -99,6 +101,8 @@ class PioneerScVsx extends utils.Adapter {
 		});
 		// Connect "changed" Handler
 		this.device.on("changed", async (name) => {
+			// update connection state by each message from device
+			this.setState("info.connection", true, true);
 			const dtan = DeviceToAdapterNames.find(i => i.field === name);
 			if( dtan ) {
 				if( dtan.changesOnly ) {
@@ -184,6 +188,8 @@ class PioneerScVsx extends utils.Adapter {
 					}
 					this.log.debug("[WRITE]: Set Device Value '" + dtan.field + "' from state '" + id + "' with value: " + newVal);
 					this.device[dtan.field] = newVal;
+					// aknowledge setting of value (even if no result is return by device)
+					this.setState(dtan.state, {val: newVal, ack: true});
 				}
 				else
 				{
