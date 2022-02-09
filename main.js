@@ -61,7 +61,7 @@ class PioneerScVsx extends utils.Adapter {
 
 		// Register States
 		await this.setObjectNotExistsAsync("query", {	type: "state", common: { name: "Query Status", def: false, type: "boolean", role: "variable", read: true, write: true, }, native: {}});
-		await this.setObjectNotExistsAsync("active", { type: "state", common: { name: "Active", def: true, type: "boolean", role: "variable", read: true, write: true, desc: "Enabled/Disable IP Connection to AVR" }, native: {}});
+		await this.setObjectNotExistsAsync("active", { type: "state", common: { name: "Active", def: true, type: "boolean", role: "indicator", read: true, write: true, desc: "Enabled/Disable IP Connection to AVR" }, native: {}});
 		await this.setObjectNotExistsAsync("general.power", { _id: "general.power",	type: "state", common: { name: "Power", type: "boolean", role: "switch", read: true, write: true, states: { "false": "OFF", "true": "ON" }}, native: {} });
 		await this.setObjectNotExistsAsync("general.display", {	_id: "general.display",	type: "state", common: { name: "Display Text", type: "string", role: "variable", read: true, write: false }, native: {}});
 		await this.setObjectNotExistsAsync("general.hdmiOutput", { _id: "general.hdmiOutput", type: "state", common: { name: "HDMI Output", type: "number", role: "remote", read: true, write: true, states: pioneer.PioneerTypes.HdmiOutput },	native: {}});
@@ -89,9 +89,12 @@ class PioneerScVsx extends utils.Adapter {
 		// Init Device
 		this.device.setConfig(this.config.host, this.config.port, this.config.autoreconnect);
 		// Connect "connect" Handler
-		this.device.on("connect", () => { this.setState("info.connection", true, true);	});
+		this.device.on("connect", () => {
+			this.setState("active", true, true);
+			this.setState("info.connection", true, true);	});
 		// Connect "close" Handler
 		this.device.on("close", () => {
+			this.setState("active", false, true);
 			if( this.config.clearOnDisconnect ) {
 				DeviceToAdapterNames.forEach((i) => {
 					this.setState(i.state, { val: null, ack: true});
