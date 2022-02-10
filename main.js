@@ -166,7 +166,11 @@ class PioneerScVsx extends utils.Adapter {
 			this.log.debug("[STATE_CHANGED]: '" + this.name + "." + this.instance + "' from '" + id + "'");
 
 			if( varName == "query" ) {
-				this.device.queryStatus();
+				if (typeof state.val == "string") {
+					this.device["freeCommand"] = state.val;
+				} else {
+					this.device.queryStatus();
+				}
 				this.setState(varName, { val: false, ack: true});
 				return;
 			}
