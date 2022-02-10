@@ -24,6 +24,9 @@ const DeviceToAdapterNames = [
 	{ "field": "channelInputFormat", 	"state":	"audio.channelInputFormat",		"writable": false, 	"changesOnly": true  },
 	{ "field": "channelOutputFormat", 	"state":	"audio.channelOutputFormat",	"writable": false, 	"changesOnly": true  },
 	{ "field": "sleepTimer",			"state": 	"general.sleepTimer",			"writable": true, 	"changesOnly": true	 },
+	{ "field": "internetRadioStation",	"state": 	"audio.internetRadioStation",	"writable": false, 	"changesOnly": true	 },
+	{ "field": "internetRadioBitRaten",	"state": 	"audio.internetRadioBitRate",	"writable": false, 	"changesOnly": true	 },
+	{ "field": "internetRadioDescription",	"state": 	"audio.internetRadioDescription",	"writable": false, 	"changesOnly": true	 },
 ];
 
 class PioneerScVsx extends utils.Adapter {
