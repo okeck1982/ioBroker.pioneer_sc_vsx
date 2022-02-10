@@ -24,9 +24,9 @@ const DeviceToAdapterNames = [
 	{ "field": "channelInputFormat", 	"state":	"audio.channelInputFormat",		"writable": false, 	"changesOnly": true  },
 	{ "field": "channelOutputFormat", 	"state":	"audio.channelOutputFormat",	"writable": false, 	"changesOnly": true  },
 	{ "field": "sleepTimer",			"state": 	"general.sleepTimer",			"writable": true, 	"changesOnly": true	 },
-	{ "field": "internetRadioStation",	"state": 	"audio.internetRadioStation",	"writable": false, 	"changesOnly": true	 },
-	{ "field": "internetRadioBitRaten",	"state": 	"audio.internetRadioBitRate",	"writable": false, 	"changesOnly": true	 },
-	{ "field": "internetRadioDescription",	"state": 	"audio.internetRadioDescription",	"writable": false, 	"changesOnly": true	 },
+	{ "field": "internetRadioStation",	"state": 	"netRadio.station",				"writable": false, 	"changesOnly": true	 },
+	{ "field": "internetRadioBitRaten",	"state": 	"netRadio.bitrate",				"writable": false, 	"changesOnly": true	 },
+	{ "field": "internetRadioDescription", "state":	"netRadio.description",			"writable": false, 	"changesOnly": true	 },
 ];
 
 class PioneerScVsx extends utils.Adapter {
@@ -83,16 +83,12 @@ class PioneerScVsx extends utils.Adapter {
 		await this.setObjectNotExistsAsync("audio.selectedListeningMode", {	_id: "audio.selectedListeningMode",	type: "state", common: { name: "Listening Mode (selected)", type: "string", role: "variable", read: true, write: true, states: pioneer.PioneerTypes.SelectedListeningMode }, native: {}});
 		await this.setObjectNotExistsAsync("audio.channelInputFormat", { _id: "audio.channelInputFormat", type: "state", common: { name: "Channel Input Format", type: "string", role: "variable", read: true, write: false }, native: {}});
 		await this.setObjectNotExistsAsync("audio.channelOutputFormat", { _id: "audio.channelOutputFormat", type: "state", common: { name: "Channel Output Format", type: "string", role: "variable", read: true, write: false }, native: {}});
-		await this.setObjectNotExistsAsync("audio.internetRadioStation", { _id: "audio.internetRadioStation", type: "state", common: { name: "Name of station of internet radio", type: "string", role: "variable", read: true, write: false }, native: {}});
-		await this.setObjectNotExistsAsync("audio.internetRadioBitRate", { _id: "audio.internetRadioBitRate", type: "state", common: { name: "Bit rate of internet radio station", type: "string", role: "variable", read: true, write: false }, native: {}});
-		await this.setObjectNotExistsAsync("audio.internetRadioDescription", { _id: "audio.internetRadioDescription", type: "state", common: { name: "Description of internet radio station", type: "string", role: "variable", read: true, write: false }, native: {}});
+		await this.setObjectNotExistsAsync("netradio.station", { type: "state", common: { name: "Name of station of internet radio", type: "string", role: "variable", read: true, write: false }, native: {}});
+		await this.setObjectNotExistsAsync("netradio.bitrate", { type: "state", common: { name: "Bit rate of internet radio station", type: "string", role: "variable", read: true, write: false }, native: {}});
+		await this.setObjectNotExistsAsync("netradio.description", { type: "state", common: { name: "Description of internet radio station", type: "string", role: "variable", read: true, write: false }, native: {}});
 
 		// Subscribe to State Changes
-		this.subscribeStates("active");
-		this.subscribeStates("query");
-		this.subscribeStates("command");
-		this.subscribeStates("audio.*");
-		this.subscribeStates("general.*");
+		this.subscribeStates("*");
 
 		// Init Device
 		this.device.setConfig(this.config.host, this.config.port, this.config.autoreconnect);
