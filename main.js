@@ -61,6 +61,7 @@ class PioneerScVsx extends utils.Adapter {
 
 		// Register States
 		await this.setObjectNotExistsAsync("query", {	type: "state", common: { name: "Query Status", def: false, type: "boolean", role: "variable", read: true, write: true, }, native: {}});
+		await this.setObjectNotExistsAsync("command", {	type: "state", common: { name: "Command", def: "", type: "string", role: "variable", read: true, write: true, }, native: {}});
 		await this.setObjectNotExistsAsync("active", { type: "state", common: { name: "Active", def: true, type: "boolean", role: "indicator", read: true, write: true, desc: "Enabled/Disable IP Connection to AVR" }, native: {}});
 		await this.setObjectNotExistsAsync("general.power", { _id: "general.power",	type: "state", common: { name: "Power", type: "boolean", role: "switch", read: true, write: true, states: { "false": "OFF", "true": "ON" }}, native: {} });
 		await this.setObjectNotExistsAsync("general.display", {	_id: "general.display",	type: "state", common: { name: "Display Text", type: "string", role: "variable", read: true, write: false }, native: {}});
@@ -83,6 +84,7 @@ class PioneerScVsx extends utils.Adapter {
 		// Subscribe to State Changes
 		this.subscribeStates("active");
 		this.subscribeStates("query");
+		this.subscribeStates("command");
 		this.subscribeStates("audio.*");
 		this.subscribeStates("general.*");
 
@@ -165,13 +167,14 @@ class PioneerScVsx extends utils.Adapter {
 			this.log.debug("[STATE_CHANGED]: '" + this.name + "." + this.instance + "' from '" + id + "'");
 
 			if( varName == "query" ) {
-				if (typeof state.val == "string") {
-					this.device.sendCommand(state.val);
-				} else {
-					this.device.queryStatus();
-				}
+				this.device.queryStatus();
 				this.setState(varName, { val: false, ack: true});
 				return;
+			}
+
+			if( varName == "command" ) {
+				this.device.sendCommand(state.val);
+				this.setState(varName, { val: state.val, ack: true});
 			}
 
 			if( varName == "active" ) {
