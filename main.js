@@ -90,11 +90,10 @@ class PioneerScVsx extends utils.Adapter {
 		this.device.setConfig(this.config.host, this.config.port, this.config.autoreconnect);
 		// Connect "connect" Handler
 		this.device.on("connect", () => {
-			this.setState("active", true, true);
-			this.setState("info.connection", true, true);	});
+			this.setState("info.connection", true, true);
+		});
 		// Connect "close" Handler
 		this.device.on("close", () => {
-			this.setState("active", false, true);
 			if( this.config.clearOnDisconnect ) {
 				DeviceToAdapterNames.forEach((i) => {
 					this.setState(i.state, { val: null, ack: true});
@@ -167,7 +166,7 @@ class PioneerScVsx extends utils.Adapter {
 
 			if( varName == "query" ) {
 				if (typeof state.val == "string") {
-					this.device["freeCommand"] = state.val;
+					this.device.sendCommand(state.val);
 				} else {
 					this.device.queryStatus();
 				}
@@ -179,6 +178,14 @@ class PioneerScVsx extends utils.Adapter {
 				if(state.val) { this.device.connect();	} else { this.device.disconnect(); }
 				this.setState(varName, { val: state.val, ack: true});
 				return;
+			}
+
+			if ( varName == "audio.buttonVolumeUp") {
+				this.device.buttonVolumeUp();
+			}
+
+			if ( varName == "audio.buttonVolumeDown") {
+				this.device.buttonVolumeDown();
 			}
 
 			/* Get Device Variable Name from state name */
