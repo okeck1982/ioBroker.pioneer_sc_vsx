@@ -24,6 +24,10 @@ const DeviceToAdapterNames = [
 	{ "field": "channelInputFormat", 	"state":	"audio.channelInputFormat",		"writable": false, 	"changesOnly": true  },
 	{ "field": "channelOutputFormat", 	"state":	"audio.channelOutputFormat",	"writable": false, 	"changesOnly": true  },
 	{ "field": "sleepTimer",			"state": 	"general.sleepTimer",			"writable": true, 	"changesOnly": true	 },
+	{ "field": "internetRadioStation",	"state": 	"netradio.station",				"writable": false, 	"changesOnly": true	 },
+	{ "field": "internetRadioIcon",		"state": 	"netradio.icon",				"writable": false, 	"changesOnly": true	 },
+	{ "field": "internetRadioBitRate",	"state": 	"netradio.bitrate",				"writable": false, 	"changesOnly": true	 },
+	{ "field": "internetRadioDescription", "state":	"netradio.description",			"writable": false, 	"changesOnly": true	 },
 ];
 
 class PioneerScVsx extends utils.Adapter {
@@ -61,7 +65,8 @@ class PioneerScVsx extends utils.Adapter {
 
 		// Register States
 		await this.setObjectNotExistsAsync("query", {	type: "state", common: { name: "Query Status", def: false, type: "boolean", role: "variable", read: true, write: true, }, native: {}});
-		await this.setObjectNotExistsAsync("active", { type: "state", common: { name: "Active", def: true, type: "boolean", role: "variable", read: true, write: true, desc: "Enabled/Disable IP Connection to AVR" }, native: {}});
+		await this.setObjectNotExistsAsync("command", {	type: "state", common: { name: "Command", def: "", type: "string", role: "variable", read: true, write: true, }, native: {}});
+		await this.setObjectNotExistsAsync("active", { type: "state", common: { name: "Active", def: true, type: "boolean", role: "indicator", read: true, write: true, desc: "Enabled/Disable IP Connection to AVR" }, native: {}});
 		await this.setObjectNotExistsAsync("general.power", { _id: "general.power",	type: "state", common: { name: "Power", type: "boolean", role: "switch", read: true, write: true, states: { "false": "OFF", "true": "ON" }}, native: {} });
 		await this.setObjectNotExistsAsync("general.display", {	_id: "general.display",	type: "state", common: { name: "Display Text", type: "string", role: "variable", read: true, write: false }, native: {}});
 		await this.setObjectNotExistsAsync("general.hdmiOutput", { _id: "general.hdmiOutput", type: "state", common: { name: "HDMI Output", type: "number", role: "remote", read: true, write: true, states: pioneer.PioneerTypes.HdmiOutput },	native: {}});
@@ -73,21 +78,26 @@ class PioneerScVsx extends utils.Adapter {
 		await this.setObjectNotExistsAsync("audio.inputSignal", { _id: "audio.inputSignal",	type: "state", common: { name: "Input Signal", type: "string", role: "variable", read: true, write: false, desc: "Audio Codec / Frequency" }, native: {}});
 		await this.setObjectNotExistsAsync("audio.mute", { _id: "audio.mute", type: "state", common: { name: "Mute", type: "boolean", role: "switch", read: true, write: true, states: { "false": "OFF", "true": "MUTED" }}, native: {}});
 		await this.setObjectNotExistsAsync("audio.volume", { _id: "audio.volume", type: "state", common: { name: "Volume", type: "number", role: "variable", read: true, write: true, unit: " dB", min: -80, max: 12 },	native: {}});
+		await this.setObjectNotExistsAsync("audio.buttonVolumeUp", {  _id: "audio.buttonVolumeUp", type: "state", common: { name: "turn up volume", type: "boolean", role: "button", read: false, write: true }, native: {}});
+		await this.setObjectNotExistsAsync("audio.buttonVolumeDown", {  _id: "audio.buttonVolumeDown", type: "state", common: { name: "turn down volume", type: "boolean", role: "button", read: false, write: true }, native: {}});
 		await this.setObjectNotExistsAsync("audio.currentListeningMode", { _id: "audio.currentListeningMode", type: "state", common: { name: "Listening Mode (current)", type: "string", role: "variable", read: true, write: false }, native: {}});
 		await this.setObjectNotExistsAsync("audio.selectedListeningMode", {	_id: "audio.selectedListeningMode",	type: "state", common: { name: "Listening Mode (selected)", type: "string", role: "variable", read: true, write: true, states: pioneer.PioneerTypes.SelectedListeningMode }, native: {}});
 		await this.setObjectNotExistsAsync("audio.channelInputFormat", { _id: "audio.channelInputFormat", type: "state", common: { name: "Channel Input Format", type: "string", role: "variable", read: true, write: false }, native: {}});
 		await this.setObjectNotExistsAsync("audio.channelOutputFormat", { _id: "audio.channelOutputFormat", type: "state", common: { name: "Channel Output Format", type: "string", role: "variable", read: true, write: false }, native: {}});
+		await this.setObjectNotExistsAsync("netradio.station", { type: "state", common: { name: "Name of internet radio station", type: "string", role: "variable", read: true, write: false }, native: {}});
+		await this.setObjectNotExistsAsync("netradio.icon", { type: "state", common: { name: "Icon of internet radio station", type: "string", role: "text.url", read: true, write: false }, native: {}});
+		await this.setObjectNotExistsAsync("netradio.bitrate", { type: "state", common: { name: "Bit rate of internet radio station", type: "string", role: "media.bitrate", read: true, write: false }, native: {}});
+		await this.setObjectNotExistsAsync("netradio.description", { type: "state", common: { name: "Description of internet radio station", type: "string", role: "variable", read: true, write: false }, native: {}});
 
 		// Subscribe to State Changes
-		this.subscribeStates("active");
-		this.subscribeStates("query");
-		this.subscribeStates("audio.*");
-		this.subscribeStates("general.*");
+		this.subscribeStates("*");
 
 		// Init Device
 		this.device.setConfig(this.config.host, this.config.port, this.config.autoreconnect);
 		// Connect "connect" Handler
-		this.device.on("connect", () => { this.setState("info.connection", true, true);	});
+		this.device.on("connect", () => {
+			this.setState("info.connection", true, true);
+		});
 		// Connect "close" Handler
 		this.device.on("close", () => {
 			if( this.config.clearOnDisconnect ) {
@@ -99,6 +109,8 @@ class PioneerScVsx extends utils.Adapter {
 		});
 		// Connect "changed" Handler
 		this.device.on("changed", async (name) => {
+			// update connection state by each message from device
+			this.setState("info.connection", true, true);
 			const dtan = DeviceToAdapterNames.find(i => i.field === name);
 			if( dtan ) {
 				if( dtan.changesOnly ) {
@@ -160,14 +172,27 @@ class PioneerScVsx extends utils.Adapter {
 
 			if( varName == "query" ) {
 				this.device.queryStatus();
-				this.setState("query", { val: false, ack: true});
+				this.setState(varName, { val: false, ack: true});
 				return;
+			}
+
+			if( varName == "command" ) {
+				this.device.sendCommand(state.val);
+				this.setState(varName, { val: state.val, ack: true});
 			}
 
 			if( varName == "active" ) {
 				if(state.val) { this.device.connect();	} else { this.device.disconnect(); }
-				this.setState("active", { val: state.val, ack: true});
+				this.setState(varName, { val: state.val, ack: true});
 				return;
+			}
+
+			if ( varName == "audio.buttonVolumeUp") {
+				this.device.buttonVolumeUp();
+			}
+
+			if ( varName == "audio.buttonVolumeDown") {
+				this.device.buttonVolumeDown();
 			}
 
 			/* Get Device Variable Name from state name */
@@ -184,6 +209,8 @@ class PioneerScVsx extends utils.Adapter {
 					}
 					this.log.debug("[WRITE]: Set Device Value '" + dtan.field + "' from state '" + id + "' with value: " + newVal);
 					this.device[dtan.field] = newVal;
+					// aknowledge setting of value (even if no result is return by device)
+					this.setState(dtan.state, {val: newVal, ack: true});
 				}
 				else
 				{
