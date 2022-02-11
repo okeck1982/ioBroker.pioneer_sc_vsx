@@ -38,8 +38,7 @@ For newer models like Pioneer VSX-1151 please refer to [adapter with eiscp suppo
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 0.0.3 (2022-02-11)
 - Updated README.md (Changelog)
 
 ### 0.0.2 (2022-02-11)
@@ -51,10 +50,10 @@ For newer models like Pioneer VSX-1151 please refer to [adapter with eiscp suppo
 * (Sneak-L8)  Added volume up/down buttons
 * (Sneak-L8)  Separate state for sending individual commands to device
 * (Sneak-L8)  Support internet radio information's (station, bitrate, description, icon)
-  
+
 ### 0.0.1 (2022-02-04)
 * (okeck1982) initial release
-  
+
 ## License
 MIT License
 

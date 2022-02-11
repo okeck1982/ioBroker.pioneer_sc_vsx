@@ -1,6 +1,6 @@
 {
   "name": "iobroker.pioneer_sc_vsx",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Remote Control of Pioneer SC/VSX AV-Receiver",
   "author": {
     "name": "okeck1982",
