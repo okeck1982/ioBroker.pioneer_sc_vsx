@@ -64,9 +64,9 @@ class PioneerScVsx extends utils.Adapter {
 		this.setState("info.connection", false, true);
 
 		// Register States
-		await this.setObjectNotExistsAsync("query", {	type: "state", common: { name: "Query Status", def: false, type: "boolean", role: "variable", read: true, write: true, }, native: {}});
-		await this.setObjectNotExistsAsync("command", {	type: "state", common: { name: "Command", def: "", type: "string", role: "variable", read: true, write: true, }, native: {}});
-		await this.setObjectNotExistsAsync("active", { type: "state", common: { name: "Active", def: true, type: "boolean", role: "indicator", read: true, write: true, desc: "Enabled/Disable IP Connection to AVR" }, native: {}});
+		await this.setObjectNotExistsAsync("query", { type: "state", common: { name: "Query Status", def: false, type: "boolean", role: "button", read: false, write: true, }, native: {}});
+		await this.setObjectNotExistsAsync("command", {	type: "state", common: { name: "Command", def: "", type: "string", role: "text", read: false, write: true, }, native: {}});
+		await this.setObjectNotExistsAsync("active", { type: "state", common: { name: "Active", def: true, type: "boolean", role: "switch", read: true, write: true, desc: "Enabled/Disable IP Connection to AVR" }, native: {}});
 		await this.setObjectNotExistsAsync("general.power", { _id: "general.power",	type: "state", common: { name: "Power", type: "boolean", role: "switch", read: true, write: true, states: { "false": "OFF", "true": "ON" }}, native: {} });
 		await this.setObjectNotExistsAsync("general.display", {	_id: "general.display",	type: "state", common: { name: "Display Text", type: "string", role: "variable", read: true, write: false }, native: {}});
 		await this.setObjectNotExistsAsync("general.hdmiOutput", { _id: "general.hdmiOutput", type: "state", common: { name: "HDMI Output", type: "number", role: "remote", read: true, write: true, states: pioneer.PioneerTypes.HdmiOutput },	native: {}});
@@ -93,7 +93,7 @@ class PioneerScVsx extends utils.Adapter {
 		this.subscribeStates("*");
 
 		// Init Device
-		this.device.setConfig(this.config.host, this.config.port, this.config.autoreconnect);
+		this.device.setConfig(this.config.host, this.config.port, this.config.autoreconnect, 30, this.config.showCustomInputNames);
 		// Connect "connect" Handler
 		this.device.on("connect", () => {
 			this.setState("info.connection", true, true);
@@ -167,56 +167,82 @@ class PioneerScVsx extends utils.Adapter {
 		if( id && state && !state.ack )
 		{
 			const varName = id.replace(this.name + "." + this.instance + ".", "");
-
 			this.log.debug("[STATE_CHANGED]: '" + this.name + "." + this.instance + "' from '" + id + "'");
 
-			if( varName == "query" ) {
-				this.device.queryStatus();
-				this.setState(varName, { val: false, ack: true});
-				return;
+			if( !this.processStateChangeCommands(varName, state)) {
+				this.processStateChangedDeviceVar(varName,state);
 			}
+		}
+	}
 
-			if( varName == "command" ) {
+	/**
+	 * Process state changes that modifies device variables
+	 * @param {string} varName Variable Name
+	 * @param {ioBroker.State} state State Data
+	 * @returns {boolean} True if command is processed, otherwise false
+	 */
+	processStateChangeCommands(varName, state) {
+		let newStateVal = state.val;
+		let processed = true;
+		switch(varName) {
+			case "active":
+				this.device.connected = (state.val == true);
+				break;
+			case "command":
 				this.device.sendCommand(state.val);
-				this.setState(varName, { val: state.val, ack: true});
-			}
-
-			if( varName == "active" ) {
-				if(state.val) { this.device.connect();	} else { this.device.disconnect(); }
-				this.setState(varName, { val: state.val, ack: true});
-				return;
-			}
-
-			if ( varName == "audio.buttonVolumeUp") {
+				break;
+			case "audio.buttonVolumeUp":
 				this.device.buttonVolumeUp();
-			}
-
-			if ( varName == "audio.buttonVolumeDown") {
+				newStateVal = false;
+				break;
+			case "audio.buttonVolumeDown":
 				this.device.buttonVolumeDown();
-			}
+				newStateVal = false;
+				break;
+			case "query":
+				this.device.queryStatus();
+				newStateVal = false;
+				break;
+			default:
+				processed = false;
+				break;
+		}
+		if( processed ) {
+			this.setState(varName, { val: newStateVal, ack: true});
+		}
+		return processed;
+	}
 
-			/* Get Device Variable Name from state name */
-			const dtan = DeviceToAdapterNames.find(i => i.state === varName);
-			if( dtan && state.val !== null )
+	/**
+	 * Process state changes that modifies device variables
+	 * @param {string} varName Variable Name
+	 * @param {ioBroker.State} state State Data
+	 * @returns {void}
+	 */
+	processStateChangedDeviceVar(varName, state) {
+		/* Get Device Variable Name from state name */
+		const dtan = DeviceToAdapterNames.find(i => i.state === varName);
+		if( dtan && state.val !== null )
+		{
+			if( dtan.writable )
 			{
-				if( dtan.writable )
-				{
-					let newVal = state.val;
-					if( varName == "audio.volume" ) {
-						newVal = (newVal > this.config.volumeMax) ? this.config.volumeMax : newVal;
-						newVal = (newVal < this.config.volumeMin) ? this.config.volumeMin : newVal;
-						if( state.val != newVal ) { this.log.warn("[LIMITER]: Req.Val. = " + state.val + " / Set Val. = " + newVal); }
+				let newVal = state.val;
+				if( varName == "audio.volume" ) {
+					newVal = (newVal > this.config.volumeMax) ? this.config.volumeMax : newVal;
+					newVal = (newVal < this.config.volumeMin) ? this.config.volumeMin : newVal;
+					if( state.val != newVal ) {
+						this.log.warn("[LIMITER]: Req.Val. = " + state.val + " / Set Val. = " + newVal);
 					}
-					this.log.debug("[WRITE]: Set Device Value '" + dtan.field + "' from state '" + id + "' with value: " + newVal);
-					this.device[dtan.field] = newVal;
-					// aknowledge setting of value (even if no result is return by device)
-					this.setState(dtan.state, {val: newVal, ack: true});
 				}
-				else
-				{
-					// Overwrite Variable Changes to Readonly Vars
-					this.setState(dtan.state, {val: this.device[dtan.field], ack: true});
-				}
+				this.log.debug("[WRITE]: Set Device Value '" + dtan.field + "' from state '" + this.name + "." + this.instance + "." + varName + "' with value: " + newVal);
+				this.device[dtan.field] = newVal;
+				// aknowledge setting of value (even if no result is return by device)
+				this.setState(dtan.state, {val: newVal, ack: true});
+			}
+			else
+			{
+				// overwrite variable changes to readonly vars
+				this.setState(dtan.state, {val: this.device[dtan.field], ack: true});
 			}
 		}
 	}

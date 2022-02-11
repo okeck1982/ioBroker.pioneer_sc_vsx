@@ -6,6 +6,10 @@
     "name": "okeck1982",
     "email": "97165003+okeck1982@users.noreply.github.com"
   },
+  "contributors": [{
+    "name": "Sneak-L8",
+    "url": "https://github.com/Sneak-L8"    
+  }],
   "homepage": "https://github.com/okeck1982/ioBroker.pioneer_sc_vsx",
   "license": "MIT",
   "keywords": [

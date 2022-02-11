@@ -46,5 +46,13 @@ systemDictionary = {
 	"volumeMax_tooltip": {
 		"en": "-80dB displayed on device as 1, 0dB displayed on device as 161 and +12dB displayed on device as 185",
 		"de": "-80dB am Gerät als 1 angezeigt, 0dB am Gerät als 161 angezeigt und +12dB am Gerät als 185 angezeigt"
+	},
+	"showCustomInputNames": {
+		"en": "Show custom input names",
+		"de": "Zeige benutzerdefinierte Namen für Eingänge"
+	},
+	"showCustomInputNames_tooltip": {
+		"en": "Shows the name configured in device instead of the default name in 'selectedInput'",
+		"de": "Zeigt den im Gerät konfigurierten Namen anstelle des standard Namen in 'selectedInput'"
 	}
 };

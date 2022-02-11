@@ -51,7 +51,8 @@
         "clearOnDisconnect": false,
         "autoreconnect": 0,
         "volumeMin": -50,
-        "volumeMax": -20
+        "volumeMax": -20,
+		"showCustomInputNames": true
 	},
 	"objects": [],
 	"instanceObjects": [
