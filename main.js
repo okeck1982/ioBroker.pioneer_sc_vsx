@@ -112,6 +112,7 @@ class PioneerScVsx extends utils.Adapter {
 			// update connection state by each message from device
 			this.setState("info.connection", true, true);
 			const dtan = DeviceToAdapterNames.find(i => i.field === name);
+			this.log.info("changed: " + name + " found: " + dtan);
 			if( dtan ) {
 				if( dtan.changesOnly ) {
 					this.getState(dtan.state, async (err, state) => {
