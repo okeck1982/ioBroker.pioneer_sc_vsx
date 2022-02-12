@@ -1,11 +1,17 @@
 {
   "name": "iobroker.pioneer_sc_vsx",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Remote Control of Pioneer SC/VSX AV-Receiver",
   "author": {
     "name": "okeck1982",
     "email": "97165003+okeck1982@users.noreply.github.com"
   },
+  "contributors": [
+    {
+      "name": "Sneak-L8",
+      "url": "https://github.com/Sneak-L8"
+    }
+  ],
   "homepage": "https://github.com/okeck1982/ioBroker.pioneer_sc_vsx",
   "license": "MIT",
   "keywords": [
@@ -22,7 +28,7 @@
     "net": "^1.0.2"
   },
   "devDependencies": {
-    "@alcalzone/release-script": "^2.2.2",
+    "@alcalzone/release-script": "^3.5.2",
     "@iobroker/testing": "^2.5.4",
     "@types/chai": "^4.3.0",
     "@types/chai-as-promised": "^7.1.4",
