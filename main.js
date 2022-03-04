@@ -6,29 +6,8 @@
 
 // The adapter-core module gives you access to the core ioBroker functions
 const utils = require("@iobroker/adapter-core");
-const pioneer = require("./lib/PioneerIPControl.js");
-
-const DeviceToAdapterNames = [
-	{ "field": "power", 				"state":	"general.power", 				"writable": true, 	"changesOnly": false },
-	{ "field": "mute", 					"state":	"audio.mute",					"writable": true, 	"changesOnly": false },
-	{ "field": "display", 				"state":	"general.display",				"writable": false, 	"changesOnly": false },
-	{ "field": "volume", 				"state":	"audio.volume",					"writable": true, 	"changesOnly": false },
-	{ "field": "selectedInput", 		"state":	"general.selectedInput",		"writable": true, 	"changesOnly": false },
-	{ "field": "hdmiOutput", 			"state":	"general.hdmiOutput",			"writable": true, 	"changesOnly": false },
-	{ "field": "speakerSelect", 		"state":	"general.speakerSelect",		"writable": true, 	"changesOnly": false },
-	{ "field": "hdmiAudio", 			"state":	"audio.hdmiAudio",				"writable": true, 	"changesOnly": false },
-	{ "field": "signalSource", 			"state":	"audio.signalSource",			"writable": true, 	"changesOnly": false },
-	{ "field": "currentListeningMode", 	"state":	"audio.currentListeningMode",	"writable": false, 	"changesOnly": true	 },
-	{ "field": "selectedListeningMode", "state":	"audio.selectedListeningMode",	"writable": true, 	"changesOnly": false },
-	{ "field": "inputSignal", 			"state":	"audio.inputSignal",			"writable": false, 	"changesOnly": true  },
-	{ "field": "channelInputFormat", 	"state":	"audio.channelInputFormat",		"writable": false, 	"changesOnly": true  },
-	{ "field": "channelOutputFormat", 	"state":	"audio.channelOutputFormat",	"writable": false, 	"changesOnly": true  },
-	{ "field": "sleepTimer",			"state": 	"general.sleepTimer",			"writable": true, 	"changesOnly": true	 },
-	{ "field": "internetRadioStation",	"state": 	"netradio.station",				"writable": false, 	"changesOnly": true	 },
-	{ "field": "internetRadioIcon",		"state": 	"netradio.icon",				"writable": false, 	"changesOnly": true	 },
-	{ "field": "internetRadioBitRate",	"state": 	"netradio.bitrate",				"writable": false, 	"changesOnly": true	 },
-	{ "field": "internetRadioDescription", "state":	"netradio.description",			"writable": false, 	"changesOnly": true	 },
-];
+const PioneerTypes = require("./lib/PioneerTypes.js");
+const PioneerDevice = require("./lib/PioneerIPControl.js");
 
 class PioneerScVsx extends utils.Adapter {
 
@@ -45,7 +24,7 @@ class PioneerScVsx extends utils.Adapter {
 		// this.on("objectChange", this.onObjectChange.bind(this));
 		// this.on("message", this.onMessage.bind(this));
 		this.on("unload", this.onUnload.bind(this));
-		this.device = new pioneer.IPControl();
+		this.device = new PioneerDevice();
 		// Connect Log Handlers
 		this.device.log = {
 			info:  (msg) => { this.log.info(msg); },
@@ -56,6 +35,114 @@ class PioneerScVsx extends utils.Adapter {
 		};
 	}
 
+	async removeUnusedDeviceStates(reportOnly=true) {
+		const devProps = this.device.getProperties();
+		const states = await this.getStatesAsync("*");
+		for(const st in states) {
+			const stShortName = st.replace(this.name + "." + this.instance + ".", "");
+			if( !devProps.includes(stShortName) && !["query", "command", "active", "info.connection"].includes(stShortName) ) {
+				if( !reportOnly ) {
+					await this.delObjectAsync(st);
+					this.log.warn("Unused State '" + st + "' deleted");
+				} else {
+					this.log.warn("Unused State '" + st + "' is not processed by this Adapter");
+				}
+			}
+		}
+	}
+
+	async removeUnusedDeviceChannels(reportOnly=true) {
+		const devChans = this.device.getChannels();
+		const channels = await this.getChannelsAsync();
+		for(const ch of channels) {
+			const chShortName = ch._id.replace(this.name + "." + this.instance + ".", "");
+			if( !devChans.includes(chShortName) && chShortName != "info" ) {
+				if( !reportOnly ) {
+					await this.delObjectAsync(ch._id);
+					this.log.warn("Unused Channel '" + ch._id + "' deleted");
+				} else {
+					this.log.warn("Unused Channel '" + ch._id + "'");
+				}
+			}
+		}
+	}
+
+	async stateAndChannelCleanup(remove=false)
+	{
+		const devProps = this.device.getProperties();
+		const devChans = this.device.getChannels();
+		const states = await this.getStatesAsync("*");
+		const channels = await this.getChannelsAsync();
+
+		for(const st in states) {
+			const stShortName = st.replace(this.name + "." + this.instance + ".", "");
+			if( !devProps.includes(stShortName) && !["query", "command", "active", "info.connection"].includes(stShortName) ) {
+				if( remove ) {
+					await this.delObjectAsync(st);
+					this.log.warn("Unused State '" + st + "' deleted");
+				} else {
+					this.log.warn("Unused State '" + st + "' is not processed by this Adapter");
+				}
+			}
+		}
+		for(const ch of channels) {
+			const chShortName = ch._id.replace(this.name + "." + this.instance + ".", "");
+			if( !devChans.includes(chShortName) && chShortName != "info" ) {
+				if( remove ) {
+					await this.delObjectAsync(ch._id);
+					this.log.warn("Unused Channel '" + ch._id + "' deleted");
+				} else {
+					this.log.warn("Unused Channel '" + ch._id + "'");
+				}
+			}
+		}
+	}
+
+	/**
+	 * Create Device Channels from available Channels in Device
+	 * @returns {Promise<void>}
+	 */
+	async createDeviceChannels() {
+		// Create Channels
+		for(const ch of this.device.getChannels()) {
+			await this.setObjectNotExistsAsync(ch, {
+				_id: ch,
+				type: "channel",
+				common: { name: ch },
+				native: {}
+			});
+		}
+	}
+
+	/**
+	 * Create Device States from available States in Device
+	 * @returns {Promise<void>}
+	 */
+	async createDeviceStates() {
+		// Create Device States
+		for(const st of this.device.getProperties()) {
+			const propInfo = this.device.getPropertyInfo(st);
+			if( propInfo && propInfo.metadata ) {
+				/** @type {ioBroker.StateObject} */
+				const stateObject = {
+					_id: st,
+					type: "state",
+					common: {
+						name: st,
+						type: (propInfo.metadata.type) ? propInfo.metadata.type : "string",
+						role: (propInfo.metadata.role) ? propInfo.metadata.role : "variable",
+						unit: (propInfo.metadata.unit) ? propInfo.metadata.unit : undefined,
+						read: propInfo.canRead,
+						write: propInfo.canWrite,
+						states: (propInfo.metadata.states) ? propInfo.metadata.states : undefined
+					},
+					native: {}
+				};
+				await this.setObjectNotExistsAsync(st, stateObject);
+			}
+		}
+	}
+
 	/**
 	 * Is called when databases are connected and adapter received configuration.
 	 */
@@ -63,37 +150,32 @@ class PioneerScVsx extends utils.Adapter {
 		// Reset the connection indicator during startup
 		this.setState("info.connection", false, true);
 
-		// Register States
+		// Init Device
+		this.device.setConfig(this.config.host, this.config.port, this.config.autoreconnect, 30);
+		this.device.setOption(PioneerTypes.Option.CUSTOM_INPUT_NAMES, this.config.showCustomInputNames);
+		this.device.setOption(PioneerTypes.Option.VOL_LIMIT_MIN, this.config.volumeMin);
+		this.device.setOption(PioneerTypes.Option.VOL_LIMIT_MAX, this.config.volumeMax);
+
+		// Set Device Features
+		this.device.setFeatures(this.config.features);
+		this.log.info("Selected Features: " + this.config.features.join(","));
+
+		// Register internal States
 		await this.setObjectNotExistsAsync("query", { type: "state", common: { name: "Query Status", def: false, type: "boolean", role: "button", read: false, write: true, }, native: {}});
 		await this.setObjectNotExistsAsync("command", {	type: "state", common: { name: "Command", def: "", type: "string", role: "text", read: false, write: true, }, native: {}});
 		await this.setObjectNotExistsAsync("active", { type: "state", common: { name: "Active", def: true, type: "boolean", role: "switch", read: true, write: true, desc: "Enabled/Disable IP Connection to AVR" }, native: {}});
-		await this.setObjectNotExistsAsync("general.power", { _id: "general.power",	type: "state", common: { name: "Power", type: "boolean", role: "switch", read: true, write: true, states: { "false": "OFF", "true": "ON" }}, native: {} });
-		await this.setObjectNotExistsAsync("general.display", {	_id: "general.display",	type: "state", common: { name: "Display Text", type: "string", role: "variable", read: true, write: false }, native: {}});
-		await this.setObjectNotExistsAsync("general.hdmiOutput", { _id: "general.hdmiOutput", type: "state", common: { name: "HDMI Output", type: "number", role: "remote", read: true, write: true, states: pioneer.PioneerTypes.HdmiOutput },	native: {}});
-		await this.setObjectNotExistsAsync("general.selectedInput", { _id: "general.selectedInput",	type: "state", common: { name: "Selected Input", type: "string", role: "variable", read: true, write: true, states: pioneer.PioneerTypes.SelectedInput }, native: {}});
-		await this.setObjectNotExistsAsync("general.speakerSelect", {_id: "general.speakerSelect", type: "state", common: { name: "Speakers", type: "number", role: "variable", read: true, write: true, states: pioneer.PioneerTypes.SpeakerSelect }, native: {}});
-		await this.setObjectNotExistsAsync("general.sleepTimer", { _id: "general.sleepTimer", type: "state", common: { name: "Sleep Timer", type: "string", role: "variable", read: true, write: true, states: pioneer.PioneerTypes.SleepTimer }, native: {}});
-		await this.setObjectNotExistsAsync("audio.hdmiAudio", {	_id: "audio.hdmiAudio",	type: "state", common: { name: "HDMI Audio", type: "number", role: "variable", read: true, write: true, states: pioneer.PioneerTypes.HdmiAudio }, native: {}});
-		await this.setObjectNotExistsAsync("audio.signalSource", { _id: "audio.signalSource", type: "state", common: { name: "Signal Source", type: "number", role: "variable", read: true, write: true, states: pioneer.PioneerTypes.SignalSource }, native: {}});
-		await this.setObjectNotExistsAsync("audio.inputSignal", { _id: "audio.inputSignal",	type: "state", common: { name: "Input Signal", type: "string", role: "variable", read: true, write: false, desc: "Audio Codec / Frequency" }, native: {}});
-		await this.setObjectNotExistsAsync("audio.mute", { _id: "audio.mute", type: "state", common: { name: "Mute", type: "boolean", role: "switch", read: true, write: true, states: { "false": "OFF", "true": "MUTED" }}, native: {}});
-		await this.setObjectNotExistsAsync("audio.volume", { _id: "audio.volume", type: "state", common: { name: "Volume", type: "number", role: "variable", read: true, write: true, unit: " dB", min: -80, max: 12 },	native: {}});
-		await this.setObjectNotExistsAsync("audio.buttonVolumeUp", {  _id: "audio.buttonVolumeUp", type: "state", common: { name: "turn up volume", type: "boolean", role: "button", read: false, write: true }, native: {}});
-		await this.setObjectNotExistsAsync("audio.buttonVolumeDown", {  _id: "audio.buttonVolumeDown", type: "state", common: { name: "turn down volume", type: "boolean", role: "button", read: false, write: true }, native: {}});
-		await this.setObjectNotExistsAsync("audio.currentListeningMode", { _id: "audio.currentListeningMode", type: "state", common: { name: "Listening Mode (current)", type: "string", role: "variable", read: true, write: false }, native: {}});
-		await this.setObjectNotExistsAsync("audio.selectedListeningMode", {	_id: "audio.selectedListeningMode",	type: "state", common: { name: "Listening Mode (selected)", type: "string", role: "variable", read: true, write: true, states: pioneer.PioneerTypes.SelectedListeningMode }, native: {}});
-		await this.setObjectNotExistsAsync("audio.channelInputFormat", { _id: "audio.channelInputFormat", type: "state", common: { name: "Channel Input Format", type: "string", role: "variable", read: true, write: false }, native: {}});
-		await this.setObjectNotExistsAsync("audio.channelOutputFormat", { _id: "audio.channelOutputFormat", type: "state", common: { name: "Channel Output Format", type: "string", role: "variable", read: true, write: false }, native: {}});
-		await this.setObjectNotExistsAsync("netradio.station", { type: "state", common: { name: "Name of internet radio station", type: "string", role: "variable", read: true, write: false }, native: {}});
-		await this.setObjectNotExistsAsync("netradio.icon", { type: "state", common: { name: "Icon of internet radio station", type: "string", role: "text.url", read: true, write: false }, native: {}});
-		await this.setObjectNotExistsAsync("netradio.bitrate", { type: "state", common: { name: "Bit rate of internet radio station", type: "string", role: "media.bitrate", read: true, write: false }, native: {}});
-		await this.setObjectNotExistsAsync("netradio.description", { type: "state", common: { name: "Description of internet radio station", type: "string", role: "variable", read: true, write: false }, native: {}});
 
-		// Subscribe to State Changes
+		// Remove(/Report) Unused States and Channels
+		await this.removeUnusedDeviceStates(!this.config.removeUnusedStates);
+		await this.removeUnusedDeviceChannels(!this.config.removeUnusedStates);
+
+		// Create missing Channels and States
+		await this.createDeviceChannels();
+		await this.createDeviceStates();
+
+		// Subscribe to all State Changes
 		this.subscribeStates("*");
 
-		// Init Device
-		this.device.setConfig(this.config.host, this.config.port, this.config.autoreconnect, 30, this.config.showCustomInputNames);
 		// Connect "connect" Handler
 		this.device.on("connect", () => {
 			this.setState("info.connection", true, true);
@@ -101,8 +183,8 @@ class PioneerScVsx extends utils.Adapter {
 		// Connect "close" Handler
 		this.device.on("close", () => {
 			if( this.config.clearOnDisconnect ) {
-				DeviceToAdapterNames.forEach((i) => {
-					this.setState(i.state, { val: null, ack: true});
+				this.device.getProperties().forEach((name) => {
+					this.setState(name, { val: null, ack: true});
 				});
 			}
 			this.setState("info.connection", false, true);
@@ -111,30 +193,7 @@ class PioneerScVsx extends utils.Adapter {
 		this.device.on("changed", async (name) => {
 			// update connection state by each message from device
 			this.setState("info.connection", true, true);
-			const dtan = DeviceToAdapterNames.find(i => i.field === name);
-			if( dtan ) {
-				if( dtan.changesOnly ) {
-					this.getState(dtan.state, async (err, state) => {
-						if( state )
-						{
-							if( state.val != this.device[name] || state.ack == false ) {
-								await this.setStateAsync(dtan.state, {val: this.device[name], ack: true});
-								this.log.debug("[CHANGE_TRACK]: Updating state '" + dtan.state + "' = '" + this.device[name] + "'");
-							}
-							else
-							{
-								this.log.debug("[CHANGE_TRACK]: State '" + dtan.state + "' = 'NOT_CHANGED'");
-							}
-						} else {
-							await this.setStateAsync(dtan.state, {val: this.device[name], ack: true});
-							this.log.debug("[EMPTY_STATE|CHANGE_TRACK]: Updating state '" + dtan.state + "' = '" + this.device[name] + "'");
-						}
-					});
-				} else {
-					await this.setStateAsync(dtan.state, {val: this.device[name], ack: true});
-					this.log.debug("[NONE]: Updating state '" + dtan.state + "' = '" + this.device[name] + "'");
-				}
-			}
+			await this.setStateAsync(name, { val: this.device.getValue(name), ack: true});
 		});
 		// Start Connection if active
 		this.getState("active", (err, state) => {
@@ -191,14 +250,6 @@ class PioneerScVsx extends utils.Adapter {
 			case "command":
 				this.device.sendCommand(state.val);
 				break;
-			case "audio.buttonVolumeUp":
-				this.device.buttonVolumeUp();
-				newStateVal = false;
-				break;
-			case "audio.buttonVolumeDown":
-				this.device.buttonVolumeDown();
-				newStateVal = false;
-				break;
 			case "query":
 				this.device.queryStatus();
 				newStateVal = false;
@@ -221,28 +272,31 @@ class PioneerScVsx extends utils.Adapter {
 	 */
 	processStateChangedDeviceVar(varName, state) {
 		/* Get Device Variable Name from state name */
-		const dtan = DeviceToAdapterNames.find(i => i.state === varName);
-		if( dtan && state.val !== null )
-		{
-			if( dtan.writable )
-			{
-				let newVal = state.val;
-				if( varName == "audio.volume" ) {
-					newVal = (newVal > this.config.volumeMax) ? this.config.volumeMax : newVal;
-					newVal = (newVal < this.config.volumeMin) ? this.config.volumeMin : newVal;
-					if( state.val != newVal ) {
-						this.log.warn("[LIMITER]: Req.Val. = " + state.val + " / Set Val. = " + newVal);
+		const propInfo = this.device.getPropertyInfo(varName);
+		if( propInfo) {
+			if( propInfo.canWrite ) {
+				// Write to Device
+				if( this.device.setValue(varName, state.val) ) {
+					this.log.debug("[WRITE_SUCCESS]: Set Device Value '" + varName + "' from state '" + this.name + "." + this.instance + "." + varName + "' with value: " + state.val);
+					// Auto Clear buttons
+					if( propInfo.metadata ) {
+						if( propInfo.metadata.role == "button" ) {
+							this.setState(varName, {val: false, ack: true});
+						}
 					}
+					// aknowledge setting of value (even if no result is return by device)
+					if( this.config.emulateStateChanges ) {
+						this.setState(varName, {val: state.val, ack: true});
+					}
+				} else {
+					this.log.debug("[WRITE_ERR_NO_CONNECTION]: Set Device Value '" + varName + "' from state '" + this.name + "." + this.instance + "." + varName + "' with value: " + state.val);
+					// reset State if write failed
+					this.setState(varName, {val: this.device.getValue(varName), ack: true});
 				}
-				this.log.debug("[WRITE]: Set Device Value '" + dtan.field + "' from state '" + this.name + "." + this.instance + "." + varName + "' with value: " + newVal);
-				this.device[dtan.field] = newVal;
-				// aknowledge setting of value (even if no result is return by device)
-				this.setState(dtan.state, {val: newVal, ack: true});
-			}
-			else
-			{
+			} else {
+				this.log.debug("[WRITE_ERR_NOT_WRITABLE]: Set Device Value '" + varName + "' from state '" + this.name + "." + this.instance + "." + varName + "' with value: " + state.val);
 				// overwrite variable changes to readonly vars
-				this.setState(dtan.state, {val: this.device[dtan.field], ack: true});
+				this.setState(varName, {val: this.device.getValue(varName), ack: true});
 			}
 		}
 	}

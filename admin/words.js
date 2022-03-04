@@ -7,6 +7,26 @@ systemDictionary = {
 		"en": "Adapter settings for Pioneer SC/VSX",
 		"de": "Adaptereinstellungen für Pioneer SC/VSX"
 	},
+	"tab_connection": {
+		"en": "Connection",
+		"de": "Verbindung"
+	},
+	"tab_settings": {
+		"en": "Settings",
+		"de": "Einstellungen"
+	},
+	"tab_features": {
+		"en": "Features",
+		"de": "Funktionen"
+	},
+	"settings_volume_limiter": {
+		"en": "Volume limiter:",
+		"de": "Lautstärkebegrenzer:"
+	},
+	"settings_other": {
+		"en": "Other:",
+		"de": "Sonstiges:"
+	},
 	"host": {
 		"en": "Hostname/IP address",
 		"de": "Hostname/IP-Adresse",
@@ -22,6 +42,10 @@ systemDictionary = {
 	"clearOnDisconnect": {
 		"en": "Clear values on disconnect",
 		"de": "Werte löschen, wenn getrennt"
+	},
+	"clearOnDisconnect_tooltip": {
+		"en": "Sets all states to (null) if connection to device is lost",
+		"de": "Setzt alle States auf (null), wenn die Verbindung zum Gerät unterbrochen ist"
 	},
 	"autoreconnect": {
 		"en": "Auto reconnect (sec.)",
@@ -54,5 +78,65 @@ systemDictionary = {
 	"showCustomInputNames_tooltip": {
 		"en": "Shows the name configured in device instead of the default name in 'selectedInput'",
 		"de": "Zeigt den im Gerät konfigurierten Namen anstelle des standard Namen in 'selectedInput'"
-	}
+	},
+	"emulateStateChanges": {
+		"en": "Emulate state changes",
+		"de": "Statuswechsel emulieren"
+	},
+	"emulateStateChanges_tooltip": {
+		"en": "If set, new state values acknowledged after transmitted, without device response",
+		"de": "Wenn gesetzt, werden neue Statuswerte ohne Rückmeldung des Geräts auf bestätig gesetzt."
+	},
+	"removeUnusedStates": {
+		"en": "Remove unused state variables",
+		"de": "Lösche nicht genutzte Status-Variablen"
+	},
+	"removeUnusedStates_tooltip": {
+		"en": "Removes state variables that not been used anymore",
+		"de": "Entfernt Status-Variablen die nicht mehr benötigt werden"
+	},
+	"FEATURE:BASE": {
+		"en": "Base functions",
+		"de": "Basis Funktionen"
+	},
+	"FEATURE:BASE_tooltip": {
+		"en": "Power, Display, Input, Volume, Mute",
+		"de": "Power, Anzeige, Eingang, Lautstärke, Stumm"
+	},
+	"FEATURE:BtnVolUpDown": {
+		"en": "Buttons for Volume Up/Down",
+		"de": "Knöpfe für Lautstärke +/-"
+	},
+	"FEATURE:NetRadio": {
+		"en": "Net Radio",
+		"de": "Netzwerk Radio"
+	},
+	"FEATURE:NetRadio_tooltip": {
+		"en": "Station, Description, Bitrate, Icon",
+		"de": "Sender, Beschreibung, Bitrate, Icon",
+	},
+	"FEATURE:ToneControl": {
+		"en": "Tone Control",
+		"de": "Ton Einstellungen"
+	},
+	"FEATURE:ToneControl_tooltip": {
+		"en": "On/Off, Bass, Treble",
+		"de": "An/Aus, Bässe, Höhen",
+	},
+	"FEATURE:AudioStatusInfo": {
+		"en": "Audio Status Information",
+		"de": "Audio Status Informationen"
+	},
+	"FEATURE:AudioStatusInfo_tooltip": {
+		"en": "Signal, Channel Input-/Output-Format",
+		"de": "Signal, Kanal Ein-/Ausgangsformat"
+	},
+	"FEATURE:DspSettings": {
+		"en": "DSP Settings",
+		"de": "DSP Einstellungen"
+	},
+	"FEATURE:DspSettings_tooltip": {
+		"en": "Signal Source, EQ, DualMono, Dialog Enhancer, DNR, DRC, MCACC, PhaseControl, ...",
+		"de": "Signal Quelle, EQ, DualMono, Dialog Enhancer, DNR, DRC, MCACC, PhaseControl, ..."
+	},
 };

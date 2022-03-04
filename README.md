@@ -38,6 +38,10 @@ For newer models like Pioneer VSX-1151 please refer to [adapter with eiscp suppo
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+
 ### 0.0.3 (2022-02-11)
 - Updated README.md (Changelog)
 

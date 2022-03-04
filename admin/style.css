@@ -33,3 +33,8 @@ label > i[title] {
 }
 
 /* Add your styles here */
+table#features tr th {
+  width: 30px;
+  background-color: red;
+  writing-mode: vertical-lr;
+}
