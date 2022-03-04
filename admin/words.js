@@ -19,13 +19,13 @@ systemDictionary = {
 		"en": "Features",
 		"de": "Funktionen"
 	},
-	"settings_volume_limiter": {
-		"en": "Volume limiter:",
-		"de": "Lautstärkebegrenzer:"
+	"settings_device": {
+		"en": "Device Settings:",
+		"de": "Geräte Einstellungen:"
 	},
-	"settings_other": {
-		"en": "Other:",
-		"de": "Sonstiges:"
+	"settings_states": {
+		"en": "Statevariables:",
+		"de": "Statusvariablen:"
 	},
 	"host": {
 		"en": "Hostname/IP address",
@@ -80,8 +80,8 @@ systemDictionary = {
 		"de": "Zeigt den im Gerät konfigurierten Namen anstelle des standard Namen in 'selectedInput'"
 	},
 	"emulateStateChanges": {
-		"en": "Emulate state changes",
-		"de": "Statuswechsel emulieren"
+		"en": "Emulate state",
+		"de": "Status emulieren"
 	},
 	"emulateStateChanges_tooltip": {
 		"en": "If set, new state values acknowledged after transmitted, without device response",
@@ -92,8 +92,8 @@ systemDictionary = {
 		"de": "Lösche nicht genutzte Status-Variablen"
 	},
 	"removeUnusedStates_tooltip": {
-		"en": "Removes state variables that not been used anymore",
-		"de": "Entfernt Status-Variablen die nicht mehr benötigt werden"
+		"en": "Removes state variables that not been used anymore on restart",
+		"de": "Entfernt Status-Variablen die nicht mehr benötigt werden bei neustart"
 	},
 	"FEATURE:BASE": {
 		"en": "Base functions",

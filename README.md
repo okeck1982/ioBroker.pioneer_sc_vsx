@@ -38,9 +38,17 @@ For newer models like Pioneer VSX-1151 please refer to [adapter with eiscp suppo
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
-
+### 0.1.0 (2022-03-04)
+- (okeck1982) Complete rework of internal PioneerIPControl Class
+  - Configuration of new Device properyts are now in seperate single File/Class
+  - All commands / query String and so are now in single place for a property
+  - Optimized device query handling with a timer controlled queue
+- (okeck1982) Implemented config options for selectabel Featuresets
+- (okeck1982) Implemented config option for automatic cleanup of unused State Variables
+- (okeck1982) Implemented config option for optimistic State Variable updates (without device response)
+- (okeck1982) Optimized/Reorganized Config Page (Tab-Layout / Grouping of Settings)
+- (okeck1982) Changed grouping of States as in Pioneer documentation
+- (okeck1982) Added new States (DSP.*, ToneControl)
 
 ### 0.0.3 (2022-02-11)
 - Updated README.md (Changelog)
