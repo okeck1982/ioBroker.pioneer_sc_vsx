@@ -24,7 +24,7 @@
     "url": "https://github.com/okeck1982/ioBroker.pioneer_sc_vsx"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^2.5.1",
+    "@iobroker/adapter-core": "^2.6.0",
     "net": "^1.0.2"
   },
   "devDependencies": {
