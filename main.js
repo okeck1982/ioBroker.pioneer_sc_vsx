@@ -151,7 +151,7 @@ class PioneerScVsx extends utils.Adapter {
 		this.setState("info.connection", false, true);
 
 		// Init Device
-		this.device.setConfig(this.config.host, this.config.port, this.config.autoreconnect, 30);
+		this.device.setConfig(this.config.host, this.config.port, this.config.autoreconnect, this.config.autoreconnectRetries, 30);
 		this.device.setOption(PioneerTypes.Option.CUSTOM_INPUT_NAMES, this.config.showCustomInputNames);
 		this.device.setOption(PioneerTypes.Option.VOL_LIMIT_MIN, this.config.volumeMin);
 		this.device.setOption(PioneerTypes.Option.VOL_LIMIT_MAX, this.config.volumeMax);

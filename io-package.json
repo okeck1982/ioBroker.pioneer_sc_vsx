@@ -62,6 +62,7 @@
         "port": 23,
         "clearOnDisconnect": false,
         "autoreconnect": 0,
+        "autoreconnectRetries": 0,
         "volumeMin": -50,
         "volumeMax": -20,
         "showCustomInputNames": false,

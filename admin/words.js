@@ -55,6 +55,14 @@ systemDictionary = {
 		"en": "when device is not reachable try to reconnect every xx seconds (0 = no retry)",
 		"de": "wenn Gerät nicht erreichbar ist, wird alle x Sekunden eine Neuverbindung versucht (0 = keine Neuverbindung)",
 	},
+	"autoreconnectRetries": {
+		"en": "max. number of reconnect retries (0=infinite)",
+		"de": "max. Anzahl an autom. neuverbindungs versuchen (0=unendlich)",
+	},
+	"autoreconnectRetries_tooltip": {
+		"en": "only available when Auto reconnect (sec.) is set greater 0",
+		"de": "nur verfügbar wenn Autom. neuverbinden (Sek.) größer 0 ist",
+	},
 	"volumeMin": {
 		"en": "Limit min. volume to:",
 		"de": "min. Lautstärke limitieren auf:"
